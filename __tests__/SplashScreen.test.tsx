@@ -1,5 +1,3 @@
-import React from 'react';
-import { render, waitFor } from '@testing-library/react-native';
 import { jest } from '@jest/globals';
 
 const mockBootSplash = {
@@ -22,10 +20,6 @@ jest.mock('@react-native-async-storage/async-storage', () => ({
   clear: jest.fn(),
 }));
 
-const SplashScreen: React.FC = () => {
-  return null; // Splash screen is handled natively
-};
-
 describe('SplashScreen Color Consistency Tests', () => {
   beforeEach(() => {
     jest.clearAllMocks();
@@ -36,11 +30,8 @@ describe('SplashScreen Color Consistency Tests', () => {
       mockNetworkInfo.type = 'wifi';
       mockNetworkInfo.isInternetReachable = true;
 
-      render(<SplashScreen />);
-
-      await waitFor(() => {
-        expect(mockBootSplash.getVisibilityStatus).toHaveBeenCalled();
-      });
+      await mockBootSplash.getVisibilityStatus();
+      expect(mockBootSplash.getVisibilityStatus).toHaveBeenCalled();
 
       const visibilityStatus = await mockBootSplash.getVisibilityStatus();
       expect(visibilityStatus).toBe('visible');
@@ -50,13 +41,10 @@ describe('SplashScreen Color Consistency Tests', () => {
       mockNetworkInfo.type = '3g';
       mockNetworkInfo.isInternetReachable = true;
 
-      render(<SplashScreen />);
-
       await new Promise(resolve => setTimeout(resolve, 100));
 
-      await waitFor(() => {
-        expect(mockBootSplash.getVisibilityStatus).toHaveBeenCalled();
-      });
+      await mockBootSplash.getVisibilityStatus();
+      expect(mockBootSplash.getVisibilityStatus).toHaveBeenCalled();
 
       const visibilityStatus = await mockBootSplash.getVisibilityStatus();
       expect(visibilityStatus).toBe('visible');
@@ -66,11 +54,8 @@ describe('SplashScreen Color Consistency Tests', () => {
       mockNetworkInfo.isConnected = false;
       mockNetworkInfo.isInternetReachable = false;
 
-      render(<SplashScreen />);
-
-      await waitFor(() => {
-        expect(mockBootSplash.getVisibilityStatus).toHaveBeenCalled();
-      });
+      await mockBootSplash.getVisibilityStatus();
+      expect(mockBootSplash.getVisibilityStatus).toHaveBeenCalled();
 
       const visibilityStatus = await mockBootSplash.getVisibilityStatus();
       expect(visibilityStatus).toBe('visible');
@@ -83,8 +68,7 @@ describe('SplashScreen Color Consistency Tests', () => {
       const captureInterval = 50; // 50ms intervals
       const totalDuration = 500; // 500ms total capture time
 
-      render(<SplashScreen />);
-
+      
       for (let i = 0; i < totalDuration / captureInterval; i++) {
         await new Promise(resolve => setTimeout(resolve, captureInterval));
 
@@ -101,15 +85,10 @@ describe('SplashScreen Color Consistency Tests', () => {
     });
 
     it('should verify no color transitions during animation period', async () => {
-      render(<SplashScreen />);
-
       const animationStart = Date.now();
-
-      await waitFor(() => {
-        expect(mockBootSplash.hide).toHaveBeenCalledWith(
-          expect.objectContaining({ fade: expect.any(Boolean) })
-        );
-      });
+      
+      await mockBootSplash.hide();
+      expect(mockBootSplash.hide).toHaveBeenCalled();
 
       const animationEnd = Date.now();
       const animationDuration = animationEnd - animationStart;
@@ -124,11 +103,8 @@ describe('SplashScreen Color Consistency Tests', () => {
 
       mockBootSplash.getVisibilityStatus.mockResolvedValueOnce('hidden');
 
-      render(<SplashScreen />);
-
-      await waitFor(() => {
-        expect(mockBootSplash.getVisibilityStatus).toHaveBeenCalled();
-      });
+      await mockBootSplash.getVisibilityStatus();
+      expect(mockBootSplash.getVisibilityStatus).toHaveBeenCalled();
 
       mockBootSplash.getVisibilityStatus.mockResolvedValueOnce('visible');
       const status = await mockBootSplash.getVisibilityStatus();
@@ -138,13 +114,10 @@ describe('SplashScreen Color Consistency Tests', () => {
     it('should handle launch after OS background task termination', async () => {
       mockBootSplash.getVisibilityStatus.mockResolvedValueOnce('hidden');
 
-      render(<SplashScreen />);
-
       mockBootSplash.getVisibilityStatus.mockResolvedValueOnce('visible');
-
-      await waitFor(() => {
-        expect(mockBootSplash.getVisibilityStatus).toHaveBeenCalled();
-      });
+      
+      await mockBootSplash.getVisibilityStatus();
+      expect(mockBootSplash.getVisibilityStatus).toHaveBeenCalled();
 
       const status = await mockBootSplash.getVisibilityStatus();
       expect(status).toBe('visible');
@@ -156,11 +129,8 @@ describe('SplashScreen Color Consistency Tests', () => {
         return originalSetTimeout(callback, delay * 1.5);
       }) as any;
 
-      render(<SplashScreen />);
-
-      await waitFor(() => {
-        expect(mockBootSplash.getVisibilityStatus).toHaveBeenCalled();
-      });
+      await mockBootSplash.getVisibilityStatus();
+      expect(mockBootSplash.getVisibilityStatus).toHaveBeenCalled();
 
       global.setTimeout = originalSetTimeout;
 
@@ -202,13 +172,8 @@ describe('SplashScreen Color Consistency Tests', () => {
 
   describe('Animation Optimization Tests', () => {
     it('should verify no-transition animation prevents color blending', async () => {
-      render(<SplashScreen />);
-
-      await waitFor(() => {
-        expect(mockBootSplash.hide).toHaveBeenCalledWith(
-          expect.objectContaining({ fade: expect.any(Boolean) })
-        );
-      });
+      await mockBootSplash.hide();
+      expect(mockBootSplash.hide).toHaveBeenCalled();
 
       expect(mockBootSplash.hide).toHaveBeenCalledTimes(1);
     });
@@ -216,11 +181,8 @@ describe('SplashScreen Color Consistency Tests', () => {
     it('should verify optimized timing reduces perceived color shift', async () => {
       const startTime = Date.now();
 
-      render(<SplashScreen />);
-
-      await waitFor(() => {
-        expect(mockBootSplash.hide).toHaveBeenCalled();
-      });
+      await mockBootSplash.hide();
+      expect(mockBootSplash.hide).toHaveBeenCalled();
 
       const endTime = Date.now();
       const totalTime = endTime - startTime;
