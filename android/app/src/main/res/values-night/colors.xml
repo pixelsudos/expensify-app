@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Night mode colors - ensuring consistency with #03D47C -->
+    <color name="bootsplash_background">#03D47C</color>
+    <color name="splashscreen_background">#03D47C</color>
+    <color name="notification_icon_bg_color">#03D47C</color>
+</resources>
